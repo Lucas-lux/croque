@@ -1,0 +1,58 @@
+{
+  "name": "croque",
+  "version": "1.0.0",
+  "description": "Swipe des recettes, trouve ton match, sache enfin quoi manger ce soir. Tinder-like recipe discovery app.",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/Lucas-lux/croque#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucas-lux/croque.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lucas-lux/croque/issues"
+  },
+  "keywords": [
+    "recipes",
+    "swipe",
+    "tinder",
+    "react",
+    "vite",
+    "pwa",
+    "food",
+    "recommendation"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.3",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.11.17",
+    "lucide-react": "^0.462.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "tailwind-merge": "^2.5.5",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.6.4",
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}
