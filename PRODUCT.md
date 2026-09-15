@@ -14,7 +14,7 @@ The first surface most people see is a TikTok clip of the swipe deck.
 
 ## Core jobs (V1)
 
-1. Onboarding: cuisines, hated ingredients, diet, allergens, level, max time, budget, moods. Skippable, editable later.
+1. Onboarding: cuisines (grouped by continent, 54 of them), hated ingredients, diet, allergens, level, max time, budget, moods. Skippable, editable later.
 2. Discover: swipe deck (left = nope, right = like, tap = details) plus buttons and undo.
 3. Learning: every swipe updates a per-feature affinity profile; the deck is re-ranked after each swipe.
 4. Match: a like on a recipe scoring ≥ 90 % triggers the match moment.
@@ -30,7 +30,7 @@ Emoji appear in copy where they carry meaning (the brief uses them); icons in th
 ## Constraints and truths
 
 - No backend in V1: everything persists in localStorage. The store layer is written so a cloud sync can replace it.
-- Recipe catalogue is mocked (78 recipes), photos come from Unsplash, Pexels and TheMealDB free media.
+- Recipe catalogue is mocked (187 recipes across 54 cuisines on 5 continents), photos come from Unsplash, Pexels and TheMealDB free media.
 - Platform: web (React + Vite), installable-feeling on phones, usable on desktop inside a phone-width column.
 - French UI only for now.
 

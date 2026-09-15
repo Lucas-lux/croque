@@ -6,13 +6,15 @@ import {
   ALLERGEN_IDS,
   BUDGETS,
   CUISINES,
-  CUISINE_IDS,
+  cuisinesByRegion,
   DIETS,
   DIET_IDS,
   DIFFICULTIES,
   DISLIKE_SUGGESTIONS,
   MOODS,
   MOOD_IDS,
+  REGIONS,
+  REGION_IDS,
   TIME_OPTIONS,
   timeOptionLabel,
 } from '@/domain/taxonomy'
@@ -61,14 +63,40 @@ function Segmented<T extends string | number>({ options, value, onChange, column
 
 /* ---------- pickers ---------- */
 
+/** Cuisines grouped by continent, with a per-region "Toutes / Aucune" toggle. */
 export function CuisinePicker({ value, onChange }: { value: CuisineId[]; onChange: (v: CuisineId[]) => void }) {
   return (
-    <div className="flex flex-wrap gap-2">
-      {CUISINE_IDS.map((id) => (
-        <Chip key={id} emoji={CUISINES[id].emoji} selected={value.includes(id)} onClick={() => onChange(toggle(value, id))}>
-          {CUISINES[id].label}
-        </Chip>
-      ))}
+    <div className="flex flex-col gap-6">
+      {REGION_IDS.map((region) => {
+        const ids = cuisinesByRegion(region)
+        const selectedCount = ids.filter((id) => value.includes(id)).length
+        const all = selectedCount === ids.length
+        return (
+          <section key={region} aria-label={REGIONS[region].label}>
+            <div className="mb-2.5 flex items-baseline justify-between gap-3">
+              <h3 className="ui text-[13px] font-bold uppercase tracking-wide text-chalk-mute">
+                <span aria-hidden="true">{REGIONS[region].emoji} </span>
+                {REGIONS[region].label}
+                {selectedCount > 0 && <span className="ml-1.5 text-butter tabular">{selectedCount}</span>}
+              </h3>
+              <button
+                type="button"
+                onClick={() => onChange(all ? value.filter((v) => !ids.includes(v)) : [...value, ...ids.filter((id) => !value.includes(id))])}
+                className="ui text-[12px] font-bold text-chalk-dim hover:text-chalk"
+              >
+                {all ? 'Aucune' : 'Toutes'}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {ids.map((id) => (
+                <Chip key={id} emoji={CUISINES[id].emoji} selected={value.includes(id)} onClick={() => onChange(toggle(value, id))}>
+                  {CUISINES[id].label}
+                </Chip>
+              ))}
+            </div>
+          </section>
+        )
+      })}
     </div>
   )
 }

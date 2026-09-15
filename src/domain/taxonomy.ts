@@ -1,23 +1,88 @@
-import type { AllergenId, Cost, CuisineId, DietId, Difficulty, MoodId, ProteinId, TagId } from './types'
+import type { AllergenId, Cost, CuisineId, DietId, Difficulty, MoodId, ProteinId, RegionId, TagId } from './types'
 
-export const CUISINES: Record<CuisineId, { label: string; emoji: string; adjective: string }> = {
-  italian: { label: 'Italienne', emoji: '🍝', adjective: 'italo' },
-  french: { label: 'Française', emoji: '🥖', adjective: 'franco' },
-  japanese: { label: 'Japonaise', emoji: '🍣', adjective: 'nippo' },
-  chinese: { label: 'Chinoise', emoji: '🥟', adjective: 'sino' },
-  thai: { label: 'Thaï', emoji: '🍜', adjective: 'thaï' },
-  vietnamese: { label: 'Vietnamienne', emoji: '🍲', adjective: 'viet' },
-  korean: { label: 'Coréenne', emoji: '🍚', adjective: 'coréo' },
-  indian: { label: 'Indienne', emoji: '🍛', adjective: 'indo' },
-  mexican: { label: 'Mexicaine', emoji: '🌮', adjective: 'mex' },
-  american: { label: 'Américaine', emoji: '🍔', adjective: 'américano' },
-  mediterranean: { label: 'Méditerranéenne', emoji: '🫒', adjective: 'méditerranéo' },
-  'middle-eastern': { label: 'Orientale', emoji: '🧆', adjective: 'oriento' },
-  spanish: { label: 'Espagnole', emoji: '🥘', adjective: 'hispano' },
-  greek: { label: 'Grecque', emoji: '🥙', adjective: 'gréco' },
+export const REGIONS: Record<RegionId, { label: string; emoji: string }> = {
+  europe: { label: 'Europe', emoji: '🏰' },
+  asia: { label: 'Asie', emoji: '🏮' },
+  'middle-east': { label: 'Moyen-Orient', emoji: '🕌' },
+  africa: { label: 'Afrique', emoji: '🌍' },
+  americas: { label: 'Amériques', emoji: '🌎' },
+}
+
+export const REGION_IDS = Object.keys(REGIONS) as RegionId[]
+
+interface CuisineMeta {
+  label: string
+  emoji: string
+  /** Prefix for the profile's "type culinaire" ("Italo-rapide"). */
+  adjective: string
+  region: RegionId
+}
+
+export const CUISINES: Record<CuisineId, CuisineMeta> = {
+  // Europe
+  italian: { label: 'Italienne', emoji: '🍝', adjective: 'italo', region: 'europe' },
+  french: { label: 'Française', emoji: '🥖', adjective: 'franco', region: 'europe' },
+  spanish: { label: 'Espagnole', emoji: '🥘', adjective: 'hispano', region: 'europe' },
+  greek: { label: 'Grecque', emoji: '🥙', adjective: 'gréco', region: 'europe' },
+  mediterranean: { label: 'Méditerranéenne', emoji: '🫒', adjective: 'méditerranéo', region: 'europe' },
+  portuguese: { label: 'Portugaise', emoji: '🧁', adjective: 'luso', region: 'europe' },
+  german: { label: 'Allemande', emoji: '🥨', adjective: 'germano', region: 'europe' },
+  austrian: { label: 'Autrichienne', emoji: '🍰', adjective: 'austro', region: 'europe' },
+  british: { label: 'Britannique', emoji: '🍟', adjective: 'anglo', region: 'europe' },
+  belgian: { label: 'Belge', emoji: '🧇', adjective: 'belgo', region: 'europe' },
+  swiss: { label: 'Suisse', emoji: '🧀', adjective: 'helvéto', region: 'europe' },
+  polish: { label: 'Polonaise', emoji: '🥟', adjective: 'polono', region: 'europe' },
+  hungarian: { label: 'Hongroise', emoji: '🍲', adjective: 'magyaro', region: 'europe' },
+  ukrainian: { label: 'Ukrainienne', emoji: '🥣', adjective: 'ukraino', region: 'europe' },
+  russian: { label: 'Russe', emoji: '🥞', adjective: 'russo', region: 'europe' },
+  scandinavian: { label: 'Scandinave', emoji: '🐟', adjective: 'scandinavo', region: 'europe' },
+  georgian: { label: 'Géorgienne', emoji: '🍞', adjective: 'géorgio', region: 'europe' },
+  croatian: { label: 'Croate & Balkans', emoji: '🌀', adjective: 'balkano', region: 'europe' },
+  irish: { label: 'Irlandaise', emoji: '🍀', adjective: 'irlando', region: 'europe' },
+  // Asia
+  japanese: { label: 'Japonaise', emoji: '🍣', adjective: 'nippo', region: 'asia' },
+  chinese: { label: 'Chinoise', emoji: '🥡', adjective: 'sino', region: 'asia' },
+  thai: { label: 'Thaï', emoji: '🍜', adjective: 'thaï', region: 'asia' },
+  vietnamese: { label: 'Vietnamienne', emoji: '🍲', adjective: 'viet', region: 'asia' },
+  korean: { label: 'Coréenne', emoji: '🍚', adjective: 'coréo', region: 'asia' },
+  indian: { label: 'Indienne', emoji: '🍛', adjective: 'indo', region: 'asia' },
+  filipino: { label: 'Philippine', emoji: '🥭', adjective: 'philippino', region: 'asia' },
+  indonesian: { label: 'Indonésienne', emoji: '🍢', adjective: 'indonéso', region: 'asia' },
+  malaysian: { label: 'Malaisienne', emoji: '🍤', adjective: 'malaisio', region: 'asia' },
+  'sri-lankan': { label: 'Sri-lankaise', emoji: '🥥', adjective: 'sri-lanko', region: 'asia' },
+  taiwanese: { label: 'Taïwanaise', emoji: '🧋', adjective: 'taïwano', region: 'asia' },
+  nepalese: { label: 'Népalaise', emoji: '🏔️', adjective: 'népalo', region: 'asia' },
+  // Middle East
+  'middle-eastern': { label: 'Libanaise & orientale', emoji: '🧆', adjective: 'oriento', region: 'middle-east' },
+  turkish: { label: 'Turque', emoji: '🌯', adjective: 'turco', region: 'middle-east' },
+  persian: { label: 'Iranienne', emoji: '🌹', adjective: 'perso', region: 'middle-east' },
+  // Africa
+  moroccan: { label: 'Marocaine', emoji: '🫖', adjective: 'maroco', region: 'africa' },
+  tunisian: { label: 'Tunisienne', emoji: '🌶️', adjective: 'tuniso', region: 'africa' },
+  egyptian: { label: 'Égyptienne', emoji: '🫘', adjective: 'égypto', region: 'africa' },
+  senegalese: { label: 'Sénégalaise', emoji: '🐠', adjective: 'sénégalo', region: 'africa' },
+  ivorian: { label: 'Ivoirienne', emoji: '🍌', adjective: 'ivoiro', region: 'africa' },
+  cameroonian: { label: 'Camerounaise', emoji: '🥬', adjective: 'camerouno', region: 'africa' },
+  nigerian: { label: 'Nigériane', emoji: '🍗', adjective: 'nigéro', region: 'africa' },
+  ethiopian: { label: 'Éthiopienne', emoji: '🫓', adjective: 'éthio', region: 'africa' },
+  'south-african': { label: 'Sud-africaine', emoji: '🍖', adjective: 'sud-af', region: 'africa' },
+  kenyan: { label: 'Kényane', emoji: '🌽', adjective: 'kényo', region: 'africa' },
+  // Americas
+  mexican: { label: 'Mexicaine', emoji: '🌮', adjective: 'mex', region: 'americas' },
+  american: { label: 'Américaine', emoji: '🍔', adjective: 'américano', region: 'americas' },
+  brazilian: { label: 'Brésilienne', emoji: '🥥', adjective: 'brasilo', region: 'americas' },
+  peruvian: { label: 'Péruvienne', emoji: '🐟', adjective: 'péruvo', region: 'americas' },
+  argentinian: { label: 'Argentine', emoji: '🥩', adjective: 'argentino', region: 'americas' },
+  colombian: { label: 'Colombienne', emoji: '🌽', adjective: 'colombo', region: 'americas' },
+  venezuelan: { label: 'Vénézuélienne', emoji: '🫓', adjective: 'vénézuélo', region: 'americas' },
+  caribbean: { label: 'Antillaise & caribéenne', emoji: '🌴', adjective: 'antillo', region: 'americas' },
+  uruguayan: { label: 'Uruguayenne', emoji: '🧉', adjective: 'uruguayo', region: 'americas' },
+  canadian: { label: 'Québécoise', emoji: '🍁', adjective: 'québéco', region: 'americas' },
 }
 
 export const CUISINE_IDS = Object.keys(CUISINES) as CuisineId[]
+
+export const cuisinesByRegion = (region: RegionId): CuisineId[] => CUISINE_IDS.filter((c) => CUISINES[c].region === region)
 
 export const TAGS: Record<TagId, { label: string; emoji: string }> = {
   quick: { label: 'Rapide', emoji: '⚡' },
@@ -121,6 +186,9 @@ export const DISLIKE_SUGGESTIONS = [
   'Abats',
   'Anchois',
   'Céleri',
+  'Gombo',
+  'Noix de coco',
+  'Gingembre',
 ]
 
 export const DIFFICULTIES: { value: Difficulty; label: string; hint: string }[] = [

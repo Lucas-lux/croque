@@ -51,7 +51,7 @@ qui redirige toutes les routes vers `index.html`.
 - **Je mange quoi ce soir ?** : tirage pondéré parmi les recettes compatibles, avec critères facultatifs (temps, budget, personnes, envie, ingrédients du frigo).
 - **Profil** : stats, type culinaire, barres de goûts, badges, coups de cœur, résumé des préférences, remise à zéro.
 
-78 recettes mockées, en français, avec ingrédients quantifiés (mis à l'échelle selon le nombre de personnes) et étapes.
+187 recettes en français, 54 cuisines sur 5 continents (Afrique de l'Ouest et de l'Est, Maghreb, Amérique latine et Caraïbes, toute l'Europe, Asie du Sud-Est, Moyen-Orient…), avec ingrédients quantifiés (mis à l'échelle selon le nombre de personnes) et étapes. Le sélecteur de cuisines de l'onboarding est groupé par continent, avec un bouton « Toutes » par région.
 
 ## Architecture
 
@@ -59,7 +59,7 @@ qui redirige toutes les routes vers `index.html`.
 src/
   domain/               logique pure, sans React
     types.ts            Recipe, UserPreferences, SwipeEvent, TasteProfile…
-    taxonomy.ts         cuisines, tags, régimes, allergènes, libellés
+    taxonomy.ts         54 cuisines groupées par continent, tags, régimes, allergènes, libellés
     copy.ts             ton de l'app : flags, punchlines, titres de match
     badges.ts           badges calculés
     recommendation/
@@ -68,7 +68,7 @@ src/
       scoring.ts        exclusions dures, score explicite + appris, % de compatibilité, seuil de match
       recommender.ts    construction du deck (classement + exploration + diversité)
       tonight.ts        « Je mange quoi ce soir ? »
-  data/                 catalogue (78 recettes, 3 fichiers) + helpers photos
+  data/                 catalogue (187 recettes, 7 fichiers par région) + photos.ts (photo par recette)
   services/             RecipeRepository (point d'extension : API, import URL, génération)
   store/                Zustand + persistance localStorage : prefs, swipes, livre
   hooks/                useDeck, useTasteProfile, useToast, haptics

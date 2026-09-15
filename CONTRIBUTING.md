@@ -14,7 +14,7 @@ Node 20 ou plus. Le type-check tourne avec `npm run typecheck`, le build de prod
 ## Où mettre quoi
 
 - `src/domain/` : logique pure (types, taxonomie, recommandation, ton de l'app). Pas de React ici.
-- `src/data/` : le catalogue de recettes. Ajouter une recette = ajouter un objet dans un des trois fichiers.
+- `src/data/` : le catalogue de recettes, un fichier par région. Ajouter une recette = ajouter un objet dans le fichier de sa région et sa photo dans `photos.ts` (clé = id de la recette).
 - `src/store/` : état persisté (Zustand). Les sélecteurs doivent renvoyer des références stables ; dérive les listes avec `useMemo` dans les composants.
 - `src/features/` : un dossier par écran.
 - `src/components/` : primitives UI partagées. Le système visuel est décrit dans `DESIGN.md`.
@@ -27,7 +27,7 @@ Copie une recette existante et remplis les champs. Points d'attention :
 - `allergens` exclut définitivement la recette pour les personnes concernées.
 - Marque 3 ou 4 ingrédients avec le dernier argument `true` : ils s'affichent sur la carte.
 - `tags` alimente l'apprentissage et « Je mange quoi ce soir ? », choisis-les parmi ceux de `taxonomy.ts`.
-- La photo doit être libre de droits (Unsplash, Pexels, TheMealDB) et montrer le bon plat.
+- La photo doit être libre de droits (Unsplash, Pexels, TheMealDB) et montrer le bon plat. Une nouvelle cuisine se déclare dans `types.ts` (`CuisineId`) et `taxonomy.ts` (libellé, emoji, région).
 
 ## Style
 

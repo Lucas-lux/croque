@@ -1,3 +1,4 @@
+import { PHOTOS } from './photos'
 import type { Ingredient, Recipe } from '@/domain/types'
 
 /** Unsplash photo by id, sized for a phone card. Swap for your own CDN later. */
@@ -21,3 +22,10 @@ export const i = (name: string, qty?: number, unit?: string, key = false): Ingre
 export type RecipeInput = Omit<Recipe, 'servings'> & { servings?: number }
 
 export const recipe = (r: RecipeInput): Recipe => ({ servings: 2, ...r })
+
+/** Photo lookup by recipe id, so photo sourcing stays in one place (`photos.ts`). */
+export const photo = (recipeId: string): string => {
+  const url = PHOTOS[recipeId]
+  if (!url && import.meta.env.DEV) console.warn(`[recipes] no photo for ${recipeId}`)
+  return url ?? ''
+}
