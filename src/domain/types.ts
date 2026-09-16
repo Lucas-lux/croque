@@ -5,6 +5,9 @@
 
 export type RegionId = 'europe' | 'asia' | 'middle-east' | 'africa' | 'americas'
 
+/** Plat (repas) ou dessert. */
+export type CourseId = 'main' | 'dessert'
+
 export type CuisineId =
   // Europe
   | 'italian'
@@ -126,6 +129,7 @@ export interface Recipe {
   tagline: string
   image: string
   cuisine: CuisineId
+  course: CourseId
   kind: DishKind
   proteins: ProteinId[]
   time: number
@@ -144,6 +148,8 @@ export type MoodId = 'quick' | 'healthy' | 'gourmand' | 'spicy' | 'comfort' | 'l
 
 export interface UserPreferences {
   cuisines: CuisineId[]
+  /** What the deck shows: mains, desserts or both. */
+  courses: CourseId[]
   dislikedIngredients: string[]
   diet: DietId
   allergens: AllergenId[]
@@ -207,4 +213,6 @@ export interface TonightCriteria {
   people: number
   availableIngredients: string[]
   mood: MoodId | null
+  /** null = mains and desserts. */
+  course: CourseId | null
 }

@@ -19,9 +19,9 @@ export const i = (name: string, qty?: number, unit?: string, key = false): Ingre
   key,
 })
 
-export type RecipeInput = Omit<Recipe, 'servings'> & { servings?: number }
+export type RecipeInput = Omit<Recipe, 'servings' | 'course'> & { servings?: number; course?: Recipe['course'] }
 
-export const recipe = (r: RecipeInput): Recipe => ({ servings: 2, ...r })
+export const recipe = (r: RecipeInput): Recipe => ({ servings: 2, course: 'main', ...r })
 
 /** Photo lookup by recipe id, so photo sourcing stays in one place (`photos.ts`). */
 export const photo = (recipeId: string): string => {

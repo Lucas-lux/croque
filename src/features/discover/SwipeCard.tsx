@@ -113,10 +113,17 @@ export function SwipeCard({ item, depth, progress, forced, onSwiped, onOpen }: S
         <Sticker tone={compat >= 85 ? 'tomato' : compat >= 65 ? 'butter' : 'chalk'} tilt={-6} size="md" className="mt-1">
           {compat} %
         </Sticker>
-        <MetaPill>
-          <span aria-hidden="true">{CUISINES[recipe.cuisine].emoji}</span>
-          {CUISINES[recipe.cuisine].label}
-        </MetaPill>
+        <div className="flex flex-col items-end gap-1.5">
+          <MetaPill>
+            <span aria-hidden="true">{CUISINES[recipe.cuisine].emoji}</span>
+            {CUISINES[recipe.cuisine].label}
+          </MetaPill>
+          {recipe.course === 'dessert' && (
+            <MetaPill>
+              <span aria-hidden="true">🍰</span>Dessert
+            </MetaPill>
+          )}
+        </div>
       </div>
 
       {/* Stamps */}

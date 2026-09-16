@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { ChefHat, Clock, Dices, Minus, Plus, Users, Wallet, X } from 'lucide-react'
 import type { Cost, MoodId } from '@/domain/types'
-import { BUDGETS, CUISINES, MOODS, TIME_OPTIONS, timeOptionLabel } from '@/domain/taxonomy'
+import { BUDGETS, COURSES, COURSE_MODE_OPTIONS, CUISINES, MOODS, TIME_OPTIONS, timeOptionLabel, type CourseMode } from '@/domain/taxonomy'
 import { pickTonight, type TonightPick } from '@/domain/recommendation/tonight'
 import { compatLine, tonightIntro } from '@/domain/copy'
 import { costLabel, difficultyLabel, formatMinutes } from '@/lib/format'
@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/Button'
 import { Chip } from '@/components/ui/Chip'
 import { IconButton } from '@/components/ui/IconButton'
 import { MetaPill } from '@/components/ui/MetaPill'
+import { Segmented } from '@/components/ui/Segmented'
 import { SmartImage } from '@/components/ui/SmartImage'
 import { Sticker } from '@/components/ui/Sticker'
 import { allRecipes, useTasteProfile } from '@/hooks/useTasteProfile'
@@ -23,6 +24,7 @@ import { useSwipeStore } from '@/store/useSwipeStore'
 import { useBookStore, bookIdSet } from '@/store/useBookStore'
 
 const ROLL_EMOJIS = ['🍕', '🍜', '🌮', '🍛', '🥗', '🍔', '🍣', '🥘', '🍝', '🥙', '🍲', '🧆']
+const ROLL_EMOJIS_DESSERT = ['🍰', '🍫', '🍪', '🥧', '🍮', '🧁', '🍩', '🥞', '🍨', '🍓']
 
 export function TonightScreen() {
   const navigate = useNavigate()
@@ -32,6 +34,7 @@ export function TonightScreen() {
   const rawEntries = useBookStore((s) => s.entries)
   const bookIds = useMemo(() => bookIdSet(rawEntries), [rawEntries])
 
+  const [course, setCourse] = useState<CourseMode>('main')
   const [maxTime, setMaxTime] = useState<number>(0)
   const [budget, setBudget] = useState<Cost>(3)
   const [people, setPeople] = useState(2)
@@ -47,7 +50,13 @@ export function TonightScreen() {
   const recentPicks = useRef<string[]>([])
   const resultRef = useRef<HTMLDivElement>(null)
 
-  const criteria = useMemo(() => ({ maxTime, budget, people, availableIngredients: ingredients, mood }), [maxTime, budget, people, ingredients, mood])
+  const criteria = useMemo(
+    () => ({ maxTime, budget, people, availableIngredients: ingredients, mood, course: course === 'all' ? null : course }),
+    [maxTime, budget, people, ingredients, mood, course],
+  )
+
+  // The tonight pick ignores the deck's plats/desserts preference on purpose: the choice is made here.
+  const prefsForTonight = useMemo(() => ({ ...prefs, courses: ['main' as const, 'dessert' as const] }), [prefs])
 
   const roll = () => {
     if (rolling) return
@@ -56,15 +65,16 @@ export function TonightScreen() {
     setShowOptions(false)
     haptic([10, 20, 10, 20, 10])
     window.setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 260)
+    const faces = course === 'dessert' ? ROLL_EMOJIS_DESSERT : ROLL_EMOJIS
     let ticks = 0
     const interval = window.setInterval(() => {
-      setRollFace(ROLL_EMOJIS[Math.floor(Math.random() * ROLL_EMOJIS.length)])
+      setRollFace(faces[Math.floor(Math.random() * faces.length)])
       ticks++
       if (ticks >= 9) {
         window.clearInterval(interval)
         const avoid = new Set(recentPicks.current.slice(-3))
-        let result = pickTonight(allRecipes, profile, prefs, criteria, swipes, bookIds, avoid)
-        if (!result && avoid.size) result = pickTonight(allRecipes, profile, prefs, criteria, swipes, bookIds)
+        let result = pickTonight(allRecipes, profile, prefsForTonight, criteria, swipes, bookIds, avoid)
+        if (!result && avoid.size) result = pickTonight(allRecipes, profile, prefsForTonight, criteria, swipes, bookIds)
         setRolling(false)
         if (result) {
           recentPicks.current.push(result.recipe.id)
@@ -88,6 +98,8 @@ export function TonightScreen() {
     setIngredients([...ingredients, clean])
   }
 
+  const buttonLabel = course === 'dessert' ? 'Quel dessert ce soir ?' : 'Je mange quoi ce soir ?'
+
   return (
     <Screen>
       <TopBar title="Ce soir" />
@@ -98,7 +110,17 @@ export function TonightScreen() {
         </h2>
         <p className="ui mt-2 text-pretty text-[15px] font-medium text-chalk-mute">On pioche dans ce qui te ressemble. Tu peux préciser, ou laisser faire le hasard.</p>
 
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-5">
+          <span className="ui mb-2 block text-[12px] font-bold uppercase tracking-wide text-chalk-mute">Un plat ou un dessert ?</span>
+          <Segmented
+            value={course}
+            onChange={setCourse}
+            label="Plat ou dessert"
+            options={[COURSE_MODE_OPTIONS[1], COURSE_MODE_OPTIONS[2], { value: 'all', label: 'Les deux' }]}
+          />
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
           <Chip size="sm" emoji="⏱️" selected={showOptions} onClick={() => setShowOptions((v) => !v)}>
             {showOptions ? 'Masquer les critères' : 'Préciser mes critères'}
           </Chip>
@@ -175,7 +197,7 @@ export function TonightScreen() {
         </AnimatePresence>
 
         <Button variant="butter" size="xl" full className="mt-6 text-[19px]" onClick={roll} disabled={rolling} icon={<Dices className="h-6 w-6" />}>
-          {rolling ? 'On cherche…' : 'Je mange quoi ce soir ?'}
+          {rolling ? 'On cherche…' : buttonLabel}
         </Button>
       </section>
 
@@ -215,15 +237,16 @@ export function TonightScreen() {
             transition={{ type: 'spring', stiffness: 300, damping: 26 }}
             className="mt-6"
           >
-            <p className="display text-[24px] font-extrabold leading-tight text-chalk">{tonightIntro(maxTime, mood ? MOODS[mood].label : null)}</p>
+            <p className="display text-[24px] font-extrabold leading-tight text-chalk">{tonightIntro(maxTime, mood ? MOODS[mood].label : null, pick.recipe.course === 'dessert' ? 'dessert' : null)}</p>
             <article className="relative mt-3 overflow-hidden rounded-card bg-ink-800 shadow-card">
               <button type="button" onClick={() => navigate(`/recipe/${pick.recipe.id}`)} className="block w-full text-left" aria-label={`Ouvrir ${pick.recipe.name}`}>
                 <div className="relative aspect-[4/4.6]">
                   <SmartImage src={pick.recipe.image} alt="" emoji={pick.recipe.emoji} priority className="absolute inset-0 h-full w-full" />
                   <div className="card-fade absolute inset-x-0 bottom-0 h-[70%]" aria-hidden="true" />
-                  <div className="absolute left-4 top-4 flex gap-2">
+                  <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                     <Sticker tone="tomato" tilt={-6}>{pick.compat} %</Sticker>
                     {pick.fromBook && <Sticker tone="chalk" tilt={4} size="sm">Dans ton livre</Sticker>}
+                    {pick.recipe.course === 'dessert' && <Sticker tone="butter" tilt={-3} size="sm">{COURSES.dessert.emoji} Dessert</Sticker>}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-5">
                     <h3 className="display text-balance text-[34px] font-extrabold leading-[0.98]">

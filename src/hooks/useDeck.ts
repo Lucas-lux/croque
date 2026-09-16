@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ScoredRecipe, SwipeDirection, SwipeEvent } from '@/domain/types'
 import { buildDeck } from '@/domain/recommendation/recommender'
-import { scoreRecipe, isMatch } from '@/domain/recommendation/scoring'
+import { scoreRecipe, isMatch, isExcluded } from '@/domain/recommendation/scoring'
 import { usePrefsStore } from '@/store/usePrefsStore'
 import { useSwipeStore } from '@/store/useSwipeStore'
 import { useBookStore } from '@/store/useBookStore'
@@ -46,7 +46,7 @@ export function useDeck() {
   // Initial fill and refill whenever preferences change the pool.
   useEffect(() => {
     setDeck((d) => {
-      const kept = d.filter((c) => !seenIds.has(c.recipe.id))
+      const kept = d.filter((c) => !seenIds.has(c.recipe.id) && !isExcluded(c.recipe, prefs))
       // Re-score kept cards with the latest profile so the compat badge stays honest.
       const rescored = kept.map((c) => scoreRecipe(c.recipe, profile, prefs))
       return refill(rescored)

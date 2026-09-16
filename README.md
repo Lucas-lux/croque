@@ -44,11 +44,11 @@ qui redirige toutes les routes vers `index.html`.
 ## Ce que fait la V1
 
 - **Onboarding** en 6 étapes (cuisines, aliments bannis, régime, allergies, niveau + temps, budget + envies), skippable, modifiable dans *Préférences*.
-- **Swipe** : cartes photo plein format, drag avec rotation, stickers MIAM / NOPE, boutons, undo, flags humoristiques.
+- **Swipe** : cartes photo plein format, drag avec rotation, stickers MIAM / NOPE, boutons, undo, flags humoristiques. Un sélecteur **Tout / Plats / Desserts** en tête d'écran filtre le deck ; chaque recette est catégorisée plat ou dessert.
 - **Apprentissage** : chaque swipe met à jour un profil d'affinités par feature (cuisine, type de plat, tags, protéines, temps, difficulté, coût). Le deck est re-classé après chaque swipe, avec un peu d'exploration pour continuer à apprendre.
 - **Match** : un like sur une recette ≥ 90 % de compatibilité déclenche l'écran « It's a match » (confettis, coup de cœur).
-- **Mon livre** : toutes les recettes likées, recherche, filtres (coups de cœur, rapides, végé, cuisines), tri, suppression en deux temps.
-- **Je mange quoi ce soir ?** : tirage pondéré parmi les recettes compatibles, avec critères facultatifs (temps, budget, personnes, envie, ingrédients du frigo).
+- **Mon livre** : toutes les recettes likées, séparées en **Plats** et **Desserts** (avec compteurs), recherche, filtres (coups de cœur, rapides, végé, cuisines), tri, suppression en deux temps.
+- **Je mange quoi ce soir ?** : choix **Plat / Dessert / Les deux** (plat par défaut), puis tirage pondéré parmi les recettes compatibles, avec critères facultatifs (temps, budget, personnes, envie, ingrédients du frigo).
 - **Profil** : stats, type culinaire, barres de goûts, badges, coups de cœur, résumé des préférences, remise à zéro.
 
 187 recettes en français, 54 cuisines sur 5 continents (Afrique de l'Ouest et de l'Est, Maghreb, Amérique latine et Caraïbes, toute l'Europe, Asie du Sud-Est, Moyen-Orient…), avec ingrédients quantifiés (mis à l'échelle selon le nombre de personnes) et étapes. Le sélecteur de cuisines de l'onboarding est groupé par continent, avec un bouton « Toutes » par région.

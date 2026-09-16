@@ -13,6 +13,7 @@ import { allRecipes } from '@/hooks/useTasteProfile'
 import { useToast } from '@/hooks/useToast'
 import { haptic } from '@/hooks/useHaptics'
 import { usePrefsStore } from '@/store/usePrefsStore'
+import { CoursePicker } from '@/features/preferences/PreferenceFields'
 import { useSwipeStore } from '@/store/useSwipeStore'
 import { useAvatar } from '@/features/profile/useAvatar'
 import { SwipeDeck } from './SwipeDeck'
@@ -27,6 +28,7 @@ export function DiscoverScreen() {
   const { toast } = useToast()
   const swipeCount = useSwipeStore((s) => s.swipes.length)
   const prefs = usePrefsStore((s) => s.prefs)
+  const setPrefs = usePrefsStore((s) => s.setPrefs)
   const avatar = useAvatar()
 
   const restricted = useMemo(() => exhausted && allRecipes.every((r) => isExcluded(r, prefs)), [exhausted, prefs])
@@ -66,7 +68,7 @@ export function DiscoverScreen() {
       <header className="flex h-16 shrink-0 items-center justify-between">
         <Wordmark />
         <div className="flex items-center gap-2">
-          <span className="ui hidden max-w-[260px] truncate text-[13px] font-semibold text-chalk-mute sm:block">{SWIPE_COUNTER(swipeCount)}</span>
+          <CoursePicker size="sm" value={prefs.courses} onChange={(courses) => setPrefs({ courses })} />
           <IconButton tone="ink" size="md" label="Mes préférences" onClick={() => navigate('/preferences')}>
             <SlidersHorizontal />
           </IconButton>
@@ -81,7 +83,7 @@ export function DiscoverScreen() {
 
       <div className="shrink-0 pt-2" style={{ paddingBottom: 'calc(var(--nav-height) + var(--safe-bottom) + 8px)' }}>
         <ActionBar onNope={() => trigger('nope')} onLike={() => trigger('like')} onUndo={undo} canUndo={canUndo} disabled={exhausted || Boolean(forced)} />
-        <p className="ui mt-3 text-center text-[13px] font-medium text-chalk-dim sm:hidden">{SWIPE_COUNTER(swipeCount)}</p>
+        <p className="ui mt-3 text-center text-[13px] font-medium text-chalk-dim">{SWIPE_COUNTER(swipeCount)}</p>
       </div>
 
       <MatchOverlay match={lastMatch} avatar={avatar} onClose={clearMatch} />

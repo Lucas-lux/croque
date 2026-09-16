@@ -31,6 +31,7 @@ export function pickTonight(
 
   const scored: TonightPick[] = recipes
     .filter((r) => !isExcluded(r, prefs) && !disliked.has(r.id) && !avoidIds.has(r.id))
+    .filter((r) => !criteria.course || r.course === criteria.course)
     .filter((r) => criteria.maxTime === 0 || r.time <= criteria.maxTime)
     .filter((r) => r.cost <= criteria.budget)
     .map((r) => {

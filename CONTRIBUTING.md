@@ -24,6 +24,7 @@ Node 20 ou plus. Le type-check tourne avec `npm run typecheck`, le build de prod
 Copie une recette existante et remplis les champs. Points d'attention :
 
 - `kind` (`meat` / `fish` / `vegetarian` / `vegan`) pilote les filtres de régime, sois honnête.
+- `course` vaut `main` par défaut ; mets `course: 'dessert'` pour tout ce qui est sucré (desserts, goûters, petits-déjeuners sucrés).
 - `allergens` exclut définitivement la recette pour les personnes concernées.
 - Marque 3 ou 4 ingrédients avec le dernier argument `true` : ils s'affichent sur la carte.
 - `tags` alimente l'apprentissage et « Je mange quoi ce soir ? », choisis-les parmi ceux de `taxonomy.ts`.

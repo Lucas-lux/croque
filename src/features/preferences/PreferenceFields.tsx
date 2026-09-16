@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import type { AllergenId, Cost, CuisineId, DietId, Difficulty, MoodId } from '@/domain/types'
+import type { AllergenId, Cost, CourseId, CuisineId, DietId, Difficulty, MoodId } from '@/domain/types'
 import {
   ALLERGENS,
   ALLERGEN_IDS,
   BUDGETS,
+  COURSE_MODE_OPTIONS,
+  courseModeOf,
+  coursesOf,
   CUISINES,
   cuisinesByRegion,
   DIETS,
@@ -19,6 +22,7 @@ import {
   timeOptionLabel,
 } from '@/domain/taxonomy'
 import { Chip } from '@/components/ui/Chip'
+import { Segmented } from '@/components/ui/Segmented'
 import { cn } from '@/lib/cn'
 import { normalize } from '@/lib/text'
 
@@ -35,7 +39,7 @@ interface SegmentOption<T> {
 }
 
 /** A row of exclusive options with a hint under each. */
-function Segmented<T extends string | number>({ options, value, onChange, columns = 3 }: { options: SegmentOption<T>[]; value: T; onChange: (v: T) => void; columns?: number }) {
+function OptionGrid<T extends string | number>({ options, value, onChange, columns = 3 }: { options: SegmentOption<T>[]; value: T; onChange: (v: T) => void; columns?: number }) {
   return (
     <div role="radiogroup" className="grid gap-2" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
       {options.map((o) => {
@@ -62,6 +66,11 @@ function Segmented<T extends string | number>({ options, value, onChange, column
 }
 
 /* ---------- pickers ---------- */
+
+/** Mains, desserts or both. Stored as a list of courses, edited as one of three modes. */
+export function CoursePicker({ value, onChange, size = 'md' }: { value: CourseId[]; onChange: (v: CourseId[]) => void; size?: 'sm' | 'md' }) {
+  return <Segmented size={size} className="self-start" options={COURSE_MODE_OPTIONS} value={courseModeOf(value)} onChange={(mode) => onChange(coursesOf(mode))} label="Plats ou desserts" />
+}
 
 /** Cuisines grouped by continent, with a per-region "Toutes / Aucune" toggle. */
 export function CuisinePicker({ value, onChange }: { value: CuisineId[]; onChange: (v: CuisineId[]) => void }) {
@@ -198,7 +207,7 @@ export function AllergenPicker({ value, onChange }: { value: AllergenId[]; onCha
 }
 
 export function DifficultyPicker({ value, onChange }: { value: Difficulty; onChange: (v: Difficulty) => void }) {
-  return <Segmented options={DIFFICULTIES} value={value} onChange={onChange} />
+  return <OptionGrid options={DIFFICULTIES} value={value} onChange={onChange} />
 }
 
 export function TimePicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -214,7 +223,7 @@ export function TimePicker({ value, onChange }: { value: number; onChange: (v: n
 }
 
 export function BudgetPicker({ value, onChange }: { value: Cost; onChange: (v: Cost) => void }) {
-  return <Segmented options={BUDGETS} value={value} onChange={onChange} />
+  return <OptionGrid options={BUDGETS} value={value} onChange={onChange} />
 }
 
 export function MoodPicker({ value, onChange, single }: { value: MoodId[]; onChange: (v: MoodId[]) => void; single?: boolean }) {

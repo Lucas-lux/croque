@@ -16,6 +16,7 @@ export function extractFeatures(recipe: Recipe): WeightedFeature[] {
   const features: WeightedFeature[] = [
     { key: `cuisine:${recipe.cuisine}`, weight: 3 },
     { key: `kind:${recipe.kind}`, weight: 2 },
+    { key: `course:${recipe.course}`, weight: 1 },
     { key: `time:${timeBucket(recipe.time)}`, weight: 1 },
     { key: `difficulty:${recipe.difficulty}`, weight: 0.6 },
     { key: `cost:${recipe.cost}`, weight: 0.6 },

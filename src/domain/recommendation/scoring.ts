@@ -10,6 +10,8 @@ export const MATCH_THRESHOLD = 90
 /** Hard exclusions: allergies, diet and hated ingredients never show up, whatever the score. */
 export function isExcluded(recipe: Recipe, prefs: UserPreferences): boolean {
   if (recipe.allergens.some((a) => prefs.allergens.includes(a))) return true
+  const courses = prefs.courses?.length ? prefs.courses : ['main', 'dessert']
+  if (!courses.includes(recipe.course)) return true
 
   switch (prefs.diet) {
     case 'vegan':

@@ -668,6 +668,7 @@ export const ASIA_MORE = [
     tagline: 'Riz gluant au lait de coco, mangue mûre, sésame. Le dessert thaï qui rend les autres desserts inutiles.',
     image: photo('mango-sticky-rice'),
     cuisine: 'thai',
+    course: 'dessert',
     kind: 'vegan',
     proteins: ['none'],
     time: 40,

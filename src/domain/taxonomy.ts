@@ -1,4 +1,4 @@
-import type { AllergenId, Cost, CuisineId, DietId, Difficulty, MoodId, ProteinId, RegionId, TagId } from './types'
+import type { AllergenId, Cost, CourseId, CuisineId, DietId, Difficulty, MoodId, ProteinId, RegionId, TagId } from './types'
 
 export const REGIONS: Record<RegionId, { label: string; emoji: string }> = {
   europe: { label: 'Europe', emoji: '🏰' },
@@ -9,6 +9,25 @@ export const REGIONS: Record<RegionId, { label: string; emoji: string }> = {
 }
 
 export const REGION_IDS = Object.keys(REGIONS) as RegionId[]
+
+export const COURSES: Record<CourseId, { label: string; plural: string; emoji: string }> = {
+  main: { label: 'Plat', plural: 'Plats', emoji: '🍽️' },
+  dessert: { label: 'Dessert', plural: 'Desserts', emoji: '🍰' },
+}
+
+export const COURSE_IDS = Object.keys(COURSES) as CourseId[]
+
+/** UI-level choice: everything, mains only or desserts only. */
+export type CourseMode = 'all' | CourseId
+
+export const COURSE_MODE_OPTIONS: { value: CourseMode; label: string; emoji?: string }[] = [
+  { value: 'all', label: 'Tout' },
+  { value: 'main', label: 'Plats', emoji: '🍽️' },
+  { value: 'dessert', label: 'Desserts', emoji: '🍰' },
+]
+
+export const courseModeOf = (courses: CourseId[] | undefined): CourseMode => (!courses || courses.length !== 1 ? 'all' : courses[0])
+export const coursesOf = (mode: CourseMode): CourseId[] => (mode === 'all' ? ['main', 'dessert'] : [mode])
 
 interface CuisineMeta {
   label: string
@@ -208,6 +227,7 @@ export const timeOptionLabel = (t: number) => (t === 0 ? 'Peu importe' : `${t} m
 
 export const DEFAULT_PREFERENCES = {
   cuisines: [] as CuisineId[],
+  courses: ['main', 'dessert'] as CourseId[],
   dislikedIngredients: [] as string[],
   diet: 'omnivore' as DietId,
   allergens: [] as AllergenId[],

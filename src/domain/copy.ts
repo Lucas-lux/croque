@@ -69,7 +69,8 @@ export function compatLine(compat: number): string {
   return `${compat} % compatible. On te laisse juger.`
 }
 
-export function tonightIntro(maxTime: number, mood: string | null): string {
+export function tonightIntro(maxTime: number, mood: string | null, course: 'main' | 'dessert' | null = null): string {
+  if (course === 'dessert') return maxTime > 0 && maxTime <= 20 ? `Une douceur en ${maxTime} minutes ?` : 'Une petite douceur ?'
   if (maxTime > 0 && maxTime <= 20) return `Tu as ${maxTime} minutes ?`
   if (maxTime > 0 && maxTime <= 30) return `Une demi-heure devant toi ?`
   if (mood) return `Envie de ${mood.toLowerCase()} ?`

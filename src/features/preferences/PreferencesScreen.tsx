@@ -15,6 +15,7 @@ import {
   DislikePicker,
   MoodPicker,
   TimePicker,
+  CoursePicker,
 } from './PreferenceFields'
 
 export function PreferencesScreen() {
@@ -50,6 +51,9 @@ export function PreferencesScreen() {
         maxLength={24}
         className="ui h-12 rounded-2xl bg-ink-800 px-4 text-[16px] font-semibold text-chalk ring-1 ring-inset ring-white/12 focus:ring-butter"
       />
+
+      <SectionTitle>Ce que tu veux voir</SectionTitle>
+      <CoursePicker value={prefs.courses} onChange={(courses) => setPrefs({ courses })} />
 
       <SectionTitle>Cuisines préférées</SectionTitle>
       <CuisinePicker value={prefs.cuisines} onChange={(cuisines) => setPrefs({ cuisines })} />

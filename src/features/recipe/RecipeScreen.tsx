@@ -115,6 +115,11 @@ export function RecipeScreen() {
               <span aria-hidden="true">{CUISINES[recipe.cuisine].emoji}</span>
               {CUISINES[recipe.cuisine].label}
             </MetaPill>
+            {recipe.course === 'dessert' && (
+              <MetaPill>
+                <span aria-hidden="true">🍰</span>Dessert
+              </MetaPill>
+            )}
           </div>
           <h1 className="display text-balance text-[38px] font-extrabold leading-[0.98]">{recipe.name}</h1>
           <p className="ui text-[16px] font-medium text-chalk/80">{recipe.tagline}</p>

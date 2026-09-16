@@ -2,16 +2,16 @@ import { useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Search, X } from 'lucide-react'
-import type { CuisineId } from '@/domain/types'
-import { CUISINES } from '@/domain/taxonomy'
+import type { CourseId, CuisineId } from '@/domain/types'
+import { COURSES, COURSE_IDS, CUISINES, type CourseMode } from '@/domain/taxonomy'
 import { scoreRecipe } from '@/domain/recommendation/scoring'
-import { looselyIncludes } from '@/lib/text'
-import { pluralize } from '@/lib/text'
+import { looselyIncludes, pluralize } from '@/lib/text'
 import { cn } from '@/lib/cn'
 import { Screen, TopBar } from '@/components/layout/Screen'
 import { Chip } from '@/components/ui/Chip'
 import { Sticker } from '@/components/ui/Sticker'
 import { Button } from '@/components/ui/Button'
+import { Segmented } from '@/components/ui/Segmented'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { allRecipes, useTasteProfile } from '@/hooks/useTasteProfile'
 import { useBookStore, sortBookEntries } from '@/store/useBookStore'
@@ -38,6 +38,7 @@ export function BookScreen() {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
   const [sort, setSort] = useState<Sort>('recent')
+  const [courseMode, setCourseMode] = useState<CourseMode>('all')
 
   const items = useMemo(() => {
     const byId = new Map(allRecipes.map((r) => [r.id, r]))
@@ -49,6 +50,12 @@ export function BookScreen() {
       .filter((x): x is NonNullable<typeof x> => x !== null)
   }, [entries, profile, prefs])
 
+  const countByCourse = useMemo(() => {
+    const c: Record<CourseId, number> = { main: 0, dessert: 0 }
+    items.forEach(({ recipe }) => c[recipe.course]++)
+    return c
+  }, [items])
+
   const cuisinesPresent = useMemo(() => {
     const counts = new Map<CuisineId, number>()
     items.forEach(({ recipe }) => counts.set(recipe.cuisine, (counts.get(recipe.cuisine) ?? 0) + 1))
@@ -57,6 +64,7 @@ export function BookScreen() {
 
   const filtered = useMemo(() => {
     let list = items
+    if (courseMode !== 'all') list = list.filter((x) => x.recipe.course === courseMode)
     if (filter === 'favorites') list = list.filter((x) => x.entry.favorite)
     else if (filter === 'quick') list = list.filter((x) => x.recipe.time <= 20)
     else if (filter === 'veg') list = list.filter((x) => x.recipe.kind === 'vegetarian' || x.recipe.kind === 'vegan')
@@ -74,11 +82,16 @@ export function BookScreen() {
     else if (sort === 'time') sorted.sort((a, b) => a.recipe.time - b.recipe.time)
     else if (sort === 'compat') sorted.sort((a, b) => b.compat - a.compat)
     return sorted
-  }, [items, filter, query, sort])
+  }, [items, filter, query, sort, courseMode])
 
   const recent = items.slice(0, 6)
   const favoriteCount = items.filter((x) => x.entry.favorite).length
-  const showRecent = !query && filter === 'all' && sort === 'recent' && items.length >= 4
+  const showRecent = !query && filter === 'all' && sort === 'recent' && courseMode === 'all' && items.length >= 4
+
+  // In "Tout" mode the grid is split into its two courses so both stay visible.
+  const groups = (courseMode === 'all' ? COURSE_IDS : [courseMode])
+    .map((course) => ({ course, list: filtered.filter((x) => x.recipe.course === course) }))
+    .filter((g) => g.list.length > 0)
 
   if (items.length === 0) {
     return (
@@ -107,7 +120,19 @@ export function BookScreen() {
         }
       />
 
-      <label className="relative mt-1 block">
+      <Segmented
+        className="self-start"
+        value={courseMode}
+        onChange={setCourseMode}
+        label="Plats ou desserts"
+        options={[
+          { value: 'all', label: 'Tout', count: items.length },
+          { value: 'main', label: COURSES.main.plural, emoji: COURSES.main.emoji, count: countByCourse.main },
+          { value: 'dessert', label: COURSES.dessert.plural, emoji: COURSES.dessert.emoji, count: countByCourse.dessert },
+        ]}
+      />
+
+      <label className="relative mt-3 block">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-chalk-mute" />
         <input
           value={query}
@@ -163,23 +188,31 @@ export function BookScreen() {
         </>
       )}
 
-      <SectionTitle aside={<span className="ui text-[13px] font-semibold text-chalk-mute tabular">{filtered.length}</span>}>
-        {showRecent ? 'Tout le livre' : filter === 'favorites' ? 'Tes coups de cœur' : 'Résultats'}
-      </SectionTitle>
-
       {filtered.length === 0 ? (
-        <div className="rounded-3xl bg-ink-800 p-8 text-center ring-1 ring-inset ring-white/10">
-          <p className="display text-[20px] font-extrabold">Rien par ici</p>
-          <p className="ui mt-2 text-[14px] text-chalk-mute">Essaie un autre mot ou enlève un filtre.</p>
+        <div className="mt-8 rounded-3xl bg-ink-800 p-8 text-center ring-1 ring-inset ring-white/10">
+          <p className="display text-[20px] font-extrabold">
+            {courseMode === 'dessert' && !query && filter === 'all' ? 'Pas encore de dessert' : courseMode === 'main' && !query && filter === 'all' ? 'Pas encore de plat' : 'Rien par ici'}
+          </p>
+          <p className="ui mt-2 text-[14px] text-chalk-mute">
+            {courseMode !== 'all' && !query && filter === 'all' ? 'Swipe à droite sur ce qui te fait envie, il apparaîtra ici.' : 'Essaie un autre mot ou enlève un filtre.'}
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3">
-          <AnimatePresence initial={false}>
-            {filtered.map(({ recipe, entry, compat }) => (
-              <BookCard key={recipe.id} recipe={recipe} entry={entry} compat={compat} />
-            ))}
-          </AnimatePresence>
-        </div>
+        groups.map(({ course, list }) => (
+          <section key={course} aria-label={COURSES[course].plural}>
+            <SectionTitle aside={<span className="ui text-[13px] font-semibold text-chalk-mute tabular">{list.length}</span>}>
+              <span aria-hidden="true">{COURSES[course].emoji} </span>
+              {filter === 'favorites' ? `${COURSES[course].plural} coups de cœur` : COURSES[course].plural}
+            </SectionTitle>
+            <div className="grid grid-cols-2 gap-3">
+              <AnimatePresence initial={false}>
+                {list.map(({ recipe, entry, compat }) => (
+                  <BookCard key={recipe.id} recipe={recipe} entry={entry} compat={compat} />
+                ))}
+              </AnimatePresence>
+            </div>
+          </section>
+        ))
       )}
     </Screen>
   )
